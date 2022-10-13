@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.mydemo.mapper.ContractXmlMapper">
+    <update id="updateContract">
+        update contract
+        set contract_Info=#{Contract_Info},
+            contract_Start=#{Contract_Start},
+            contract_End=#{Contract_End},
+            contract_Describe=#{Contract_Describe},
+            contract_State=#{Contract_State},
+            contract_Amount=#{Contract_Amount}
+        where contract_Id = #{Contract_Id};
+    </update>
+
+    <select id="selectAllByPageAndCondition" resultType="com.tx.mydemo.domain.Contract">
+        select *
+        from contract
+        <where>
+            <if test="contract.Contract_State != null and contract.Contract_State != '' ">
+                and contract_State = #{contract.Contract_State}
+            </if>
+            <if test="contract.Contract_Start != null and contract.Contract_Start != '' ">
+                and contract_Start <![CDATA[ >= ]]> #{contract.Contract_Start}
+            </if>
+            <if test="contract.Contract_End != null and contract.Contract_End != '' ">
+                and contract_End <![CDATA[ <= ]]>  #{contract.Contract_End}
+            </if>
+        </where>
+
+        limit #{begin} , 10
+    </select>
+    <select id="totalContract" resultType="java.lang.Integer">
+        select count(*) from contract
+        <where>
+            <if test="Contract_Start != null and Contract_Start != '' ">
+                and contract_Start <![CDATA[ >= ]]> #{Contract_Start}
+            </if>
+            <if test="Contract_End != null and Contract_End != '' ">
+                and contract_End <![CDATA[ <= ]]>  #{Contract_End}
+            </if>
+            <if test="Contract_State != null and Contract_State != '' ">
+                and contract_State = #{Contract_State}
+            </if>
+
+        </where>
+    </select>
+    <select id="selectById" resultType="com.tx.mydemo.domain.Contract">
+        select *
+        from contract
+        where contract_Id = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.mydemo.mapper.InfoXmlMapper">
+    <update id="update">
+        update info
+        set info_Name=#{Info_Name},
+            info_Phone=#{Info_Phone},
+            info_Phone=#{Info_Phone},
+            info_Type=#{Info_Type},
+            info_Cycle=#{Info_Cycle},
+            info_Others=#{Info_Others}
+        where info_Id = #{Info_Id};
+    </update>
+    <delete id="deleteById">
+        delete
+        from info
+        where info_Id = #{id}
+    </delete>
+    <select id="selectAll" resultType="info">
+        select *
+        from info
+    </select>
+    <select id="selectById" resultType="com.tx.mydemo.domain.Info">
+        select *
+        from info
+        where info_Id = #{id}
+    </select>
+    <select id="selectAllByPage" resultType="com.tx.mydemo.domain.Info">
+        select *
+        from info limit #{begin} , 10
+    </select>
+    <select id="totalInfo" resultType="java.lang.Integer">
+        select count(*) from info
+        <where>
+            <if test="Info_Name != null and Info_Name != '' ">
+                and info_Name like #{Info_Name}
+            </if>
+
+            <if test="Info_Phone != null and Info_Phone != '' ">
+                and info_Phone like #{Info_Phone}
+            </if>
+
+            <if test="Info_Type != null and Info_Type != '' ">
+                and info_Type like #{Info_Type}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectAllByPageAndCondition" resultType="com.tx.mydemo.domain.Info">
+        select *
+        from info
+        <where>
+            <if test="info.Info_Name != null and info.Info_Name != '' ">
+                and info_Name like #{info.Info_Name}
+            </if>
+
+            <if test="info.Info_Phone != null and info.Info_Phone != '' ">
+                and info_Phone like #{info.Info_Phone}
+            </if>
+
+            <if test="info.Info_Type != null and info.Info_Type != '' ">
+                and info_Type like #{info.Info_Type}
+            </if>
+
+        </where>
+
+        limit #{begin} , 10
+    </select>
+    <insert id="add">
+        insert into info
+        values (null, #{Info_Name}, #{Info_Phone}, #{Info_Type}, #{Info_Cycle},#{Info_Address},#{Info_Others})
+    </insert>
+</mapper>

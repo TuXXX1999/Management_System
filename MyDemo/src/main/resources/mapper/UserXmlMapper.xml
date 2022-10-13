@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.mydemo.mapper.UserXmlMapper">
+    <resultMap id="userWithRole" type="com.tx.mydemo.domain.User">
+        <id column="User_Id" property="User_Id"></id>
+        <result column="User_Name" property="User_Name"></result>
+        <result column="User_Pass" property="User_Pass"></result>
+        <result column="User_Role" property="User_Role"></result>
+        <result column="User_Phone" property="User_Phone"></result>
+        <result column="User_Address" property="User_Address"></result>
+        <association property="roles" javaType="role">
+            <id column="Role_Id" property="role_Id"></id>
+            <result column="Role_Name" property="role_Name"></result>
+        </association>
+    </resultMap>
+    <update id="updateUser">
+        update user
+        set User_Name=#{User_Name},
+            User_Pass=#{User_Pass},
+            User_Phone=#{User_Phone},
+            User_Address=#{User_Address},
+            User_Role=#{User_Role}
+        where User_Id = #{User_Id};
+    </update>
+
+
+    <!--    <select id="login" resultType="com.tx.mydemo.domain.User">-->
+    <!--        select *-->
+    <!--        from user-->
+    <!--        where User_Name = #{User_Name}-->
+    <!--          and User_Pass = #{User_Pass};-->
+    <!--    </select>-->
+
+
+    <select id="login" resultMap="userWithRole">
+        select *
+        from user
+                 INNER JOIN role on User_Role = role_Id
+        where User_Name = #{User_Name}
+          and User_Pass = #{User_Pass};
+    </select>
+
+
+    <select id="findUserId" resultType="java.lang.Integer">
+        select User_Id
+        from user
+        where User_Name = #{username}
+    </select>
+    <select id="selectAllByPageAndCondition" resultMap="userWithRole">
+        select * from user inner join role on User_Role=role_Id
+        <where>
+            <if test="user.User_Name != null and user.User_Name != '' ">
+                and User_Name like #{user.User_Name}
+            </if>
+            <if test="user.User_Role != null and user.User_Role != ''">
+                and User_Role = #{user.User_Role}
+            </if>
+
+        </where>
+
+        limit #{begin} , 10
+    </select>
+    <select id="totalUser" resultType="java.lang.Integer">
+        select count(*) from user
+        <where>
+            <if test="User_Name != null and User_Name != '' ">
+                and User_Name like #{User_Name}
+            </if>
+
+            <if test="User_Role != null and User_Role != '' ">
+                and User_Role = #{User_Role}
+            </if>
+        </where>
+    </select>
+    <select id="UserList" resultType="com.tx.mydemo.domain.User">
+        select *
+        from user
+    </select>
+    <select id="selectById" resultType="com.tx.mydemo.domain.User">
+        select * from user where User_Id=#{id}
+    </select>
+</mapper>

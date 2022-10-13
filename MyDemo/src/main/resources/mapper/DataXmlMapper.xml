@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.mydemo.mapper.DataXmlMapper">
+    <!--    <resultMap id="DataMap" type="data">-->
+    <!--        <association property="user" column="User_Id" select="selectAllByPageAndCondition"></association>-->
+    <!--        <association property="user" column="User_Id" select="totalData"></association>-->
+    <!--    </resultMap>-->
+    <resultMap id="dataWithUser" type="com.tx.mydemo.domain.Data">
+        <id column="data_Id" property="Data_Id"></id>
+        <result column="data_Time" property="Data_Time"></result>
+        <result column="data_Amount" property="Data_Amount"></result>
+        <result column="data_Info" property="Data_Info"></result>
+        <result column="data_User" property="Data_User"></result>
+        <association property="users" javaType="user">
+            <id column="User_Id" property="User_Id"></id>
+            <result column="User_Name" property="User_Name"></result>
+            <result column="User_Pass" property="User_Pass"></result>
+        </association>
+    </resultMap>
+
+
+    <resultMap id="TotalDataWithUser" type="com.tx.mydemo.domain.Data">
+        <id column="data_Id" property="Data_Id"></id>
+        <result column="data_Time" property="Data_Time"></result>
+        <result column="data_Amount" property="Data_Amount"></result>
+        <result column="data_Info" property="Data_Info"></result>
+        <result column="data_User" property="Data_User"></result>
+        <association property="users" javaType="user">
+            <id column="User_Id" property="User_Id"></id>
+            <result column="User_Name" property="User_Name"></result>
+            <result column="User_Pass" property="User_Pass"></result>
+        </association>
+    </resultMap>
+
+    <insert id="add">
+        insert into data
+        values (null, #{Data_Time}, #{Data_Amount}, #{Data_Info}, #{Data_User})
+    </insert>
+    <update id="updateData">
+        update data
+        set data_Time=#{Data_Time},
+            data_Info=#{Data_Info},
+            data_Amount=#{Data_Amount}
+        where data_Id = #{Data_Id};
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from data
+        where data_Id = #{id}
+    </delete>
+
+
+    <!--    <select id="totalData" resultType="java.lang.Integer">-->
+    <!--        select count(*) from data-->
+    <!--        <where>-->
+    <!--            <if test="Data_Time != null and Data_Time != '' ">-->
+    <!--                and data_Time like #{Data_Time}-->
+    <!--            </if>-->
+
+    <!--            <if test="Data_Info != null and Data_Info != '' ">-->
+    <!--                and data_Info like #{Data_Info}-->
+    <!--            </if>-->
+
+    <!--            <if test="Data_User != null and Data_User != '' ">-->
+    <!--                and user_Id = #{data.Data_User}-->
+    <!--            </if>-->
+    <!--        </where>-->
+    <!--    </select>-->
+
+    <select id="totalData" resultType="java.lang.Integer">
+        select count(*)
+        from data
+        inner join user on User_Id= data_User
+        <where>
+            <if test="Data_User != null and Data_User != '' ">
+                and data_User=#{Data_User}
+            </if>
+            <if test="Data_Time != null and Data_Time != '' ">
+                and data_Time like #{Data_Time}
+            </if>
+
+            <if test="Data_Info != null and Data_Info != '' ">
+                and data_Info like #{Data_Info}
+            </if>
+        </where>
+    </select>
+
+
+    <!--    <select id="selectAllByPageAndCondition" resultType="com.tx.mydemo.domain.Data">-->
+    <!--        select *-->
+    <!--        from data-->
+    <!--        <where>-->
+    <!--            <if test="data.Data_Time != null and data.Data_Time != '' ">-->
+    <!--                and data_Time like #{data.Data_Time}-->
+    <!--            </if>-->
+
+    <!--            <if test="data.Data_Info != null and data.Data_Info != '' ">-->
+    <!--                and data_Info like #{data.Data_Info}-->
+    <!--            </if>-->
+
+    <!--            <if test="data.Data_User != null and data.Data_User != '' ">-->
+    <!--                and user_Id = #{data.Data_User}-->
+    <!--            </if>-->
+    <!--        </where>-->
+
+    <!--        limit #{begin} , 10-->
+    <!--    </select>-->
+
+
+    <select id="selectAllByPageAndCondition" parameterType="int" resultMap="dataWithUser">
+        select *
+        from data
+        inner join user on User_Id= data_User
+        <where>
+            <if test="data1.Data_User != 0 ">
+                and data_User=#{data1.Data_User}
+            </if>
+            <if test="data1.Data_Time != null and data1.Data_Time != '' ">
+                and data_Time like #{data1.Data_Time}
+            </if>
+
+            <if test="data1.Data_Info != null and data1.Data_Info != '' ">
+                and data_Info like #{data1.Data_Info}
+            </if>
+        </where>
+        limit #{begin} , 10
+    </select>
+
+
+    <select id="selectAllByPage" resultType="com.tx.mydemo.domain.Data">
+        select *
+        from data limit #{begin} , 10
+    </select>
+
+
+    <select id="selectById" resultMap="dataWithUser">
+        select *
+        from data
+                 inner join user on User_Id = data_User
+        where data_Id = #{id}
+
+    </select>
+
+
+    <select id="selectAllByPageAndConditionWithNull" parameterType="int" resultMap="dataWithUser">
+        select *
+        from data
+        inner join user on User_Id= data_User
+        <where>
+            <if test="data1.Data_Time != null and data1.Data_Time != '' ">
+                and data_Time <![CDATA[ >= ]]> #{data1.Data_Time}
+            </if>
+
+            <if test="data1.Data_Info != null and data1.Data_Info != '' ">
+                and data_Info like #{data1.Data_Info}
+            </if>
+        </where>
+        limit #{begin} , 10
+    </select>
+
+
+    <select id="totalDataWithNull" resultType="java.lang.Integer">
+        select count(*)
+        from data
+        inner join user on User_Id= data_User
+        <where>
+            <if test="Data_Time != null and Data_Time != '' ">
+                and data_Time <![CDATA[ >= ]]> #{Data_Time}
+            </if>
+
+            <if test="Data_Info != null and Data_Info != '' ">
+                and data_Info like #{Data_Info}
+            </if>
+        </where>
+    </select>
+    <select id="totalByMonth" resultType="java.lang.Integer">
+        select sum(data_Amount)
+        from data
+        where data_Time <![CDATA[ >= ]]> #{start}
+          and data_Time <![CDATA[ <= ]]> #{end}
+    </select>
+    <select id="totalByMonthById" resultType="java.lang.Integer">
+        select sum(data_Amount)
+        from data
+        where data_Time <![CDATA[ >= ]]> #{strStart}
+          and data_Time <![CDATA[ <= ]]> #{strEnd}
+          and data_Info = #{name}
+    </select>
+
+
+</mapper>

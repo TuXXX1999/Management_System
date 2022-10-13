@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.mydemo.mapper.OverDateXmlMapper">
+    <update id="update">
+        update overdate
+        set overdate_Name=#{OverDate_Name},
+            overdate_Phone=#{OverDate_Phone},
+            overdate_Type=#{OverDate_Type},
+            overdate_Time=#{OverDate_Time}
+        where overdate_Id = #{OverDate_Id};
+    </update>
+    <delete id="deleteById">
+        delete
+        from overdate
+        where overdate_Id = #{id}
+    </delete>
+    <select id="selectAll" resultType="overdate">
+        select *
+        from overdate
+    </select>
+    <select id="selectById" resultType="com.tx.mydemo.domain.OverDate">
+        select *
+        from overdate
+        where overdate_Id = #{id}
+    </select>
+    <select id="selectAllByPage" resultType="com.tx.mydemo.domain.OverDate">
+        select *
+        from overdate limit #{begin} , 10
+    </select>
+    <select id="totalInfo" resultType="java.lang.Integer">
+        select count(*) from overdate
+        <where>
+            <if test="OverDate_Name != null and OverDate_Name != '' ">
+                and overdate_Name like #{OverDate_Name}
+            </if>
+
+            <if test="OverDate_Type != null and OverDate_Type != '' ">
+                and overdate_Type like #{OverDate_Type}
+            </if>
+
+            <if test="OverDate_Phone != null and OverDate_Phone!= '' ">
+                and overdate_Phone like #{OverDate_Phone}
+            </if>
+        </where>
+
+    </select>
+    <select id="selectAllByPageAndCondition" resultType="com.tx.mydemo.domain.OverDate">
+        select *
+        from overdate
+        <where>
+            <if test="overDate.OverDate_Name != null and overDate.OverDate_Name != '' ">
+                and overdate_Name like #{overDate.OverDate_Name}
+            </if>
+
+            <if test="overDate.OverDate_Phone != null and overDate.OverDate_Phone != '' ">
+                and overdate_Phone like #{overDate.OverDate_Phone}
+            </if>
+
+            <if test="overDate.OverDate_Type != null and overDate.OverDate_Type != '' ">
+                and overdate_Type like #{overDate.OverDate_Type}
+            </if>
+
+        </where>
+
+        limit #{begin} , 10
+    </select>
+    <select id="checkOverDate" resultType="java.lang.Integer">
+        select count(*) from contract
+    </select>
+    <insert id="add">
+        insert into overdate
+        values (null, #{Info_Name}, #{Info_Phone}, #{Info_Type}, #{Info_Cycle})
+    </insert>
+</mapper>
